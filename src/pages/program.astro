@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { programs } from '../data/content';
+---
+<Base title="研修プログラム" description="戦略MGを活用した研修プログラム。2日間の基本コース、1日体験会、税理士・会計士向けコースをご用意しています。">
+  <PageHero en="Programs" title="研修プログラム" lead="目的とご経験に合わせて選べる3つのプログラム。法人向けの出張研修も承ります。" />
+
+  <section class="section">
+    <div class="container-x">
+      <div class="card mb-12 grid gap-6 p-8 md:grid-cols-[auto_1fr] md:items-center">
+        <span class="font-en text-5xl font-semibold leading-none text-dawn-300">Play<br />&amp; Learn</span>
+        <p>
+          すべてのプログラムで使うのは、戦略MG®※ という経営シミュレーション研修です。受講者は一人ひとりが会社の社長となり、仕入・製造・販売・採用・投資の意思決定を行い、期末には自分で決算書を作成します。
+          教えられるのではなく、自分の判断の結果として数字を受け取る――だから、経営と会計のつながりが深く身につきます。
+        </p>
+      </div>
+
+      <div class="grid gap-10">
+        {programs.map((p, i) => (
+          <article id={p.slug} class="card scroll-mt-28 grid gap-8 p-8 lg:grid-cols-[1fr_1.2fr] reveal">
+            <div>
+              <p class="font-en text-sm tracking-[0.2em] text-dawn-600 uppercase">{String(i + 1).padStart(2, '0')} / {p.en}</p>
+              <h2 class="mt-2 text-2xl font-bold text-night-900">{p.name}</h2>
+              <dl class="mt-6 grid gap-2 text-sm">
+                <div class="flex gap-3"><dt class="w-16 shrink-0 font-bold text-night-800">対象</dt><dd>{p.target}</dd></div>
+                <div class="flex gap-3"><dt class="w-16 shrink-0 font-bold text-night-800">時間</dt><dd>{p.duration}</dd></div>
+                <div class="flex gap-3"><dt class="w-16 shrink-0 font-bold text-night-800">会場</dt><dd>東京・大阪・名古屋・宇都宮</dd></div>
+              </dl>
+              <a href="/seminars/" class="btn-primary mt-8">開催日程を見る</a>
+            </div>
+            <div>
+              <p>{p.summary}</p>
+              <h3 class="mt-6 font-bold text-night-900">身につくこと</h3>
+              <ul class="mt-3 grid gap-2">
+                {p.points.map((pt) => (
+                  <li class="flex gap-3 text-sm"><span class="mt-1.5 size-2 shrink-0 rounded-full bg-dawn-400"></span>{pt}</li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</Base>

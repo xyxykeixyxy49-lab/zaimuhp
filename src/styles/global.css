@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --font-display: "Zen Kaku Gothic New", "Noto Sans JP", sans-serif;
+  --font-en: "Cormorant Garamond", "Times New Roman", serif;
+
+  /* 夜明けの空：夜の紺 → 朝焼けの橙 */
+  --color-night-950: #070f22;
+  --color-night-900: #0c1a3a;
+  --color-night-800: #132650;
+  --color-night-700: #1d3567;
+  --color-night-600: #2b4a85;
+  --color-dawn-50: #fff7ed;
+  --color-dawn-100: #ffedd5;
+  --color-dawn-200: #fed7aa;
+  --color-dawn-300: #fdba74;
+  --color-dawn-400: #fb923c;
+  --color-dawn-500: #f97316;
+  --color-dawn-600: #ea580c;
+  --color-gold-400: #e9c46a;
+  --color-ink: #1c2434;
+  --color-muted: #5b6577;
+  --color-paper: #fbfaf7;
+  --color-line: #06c755;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { @apply bg-paper text-ink font-sans antialiased; line-height: 1.85; letter-spacing: 0.02em; }
+  h1, h2, h3, h4 { @apply font-display; line-height: 1.45; letter-spacing: 0.04em; }
+  :focus-visible { outline: 3px solid var(--color-dawn-400); outline-offset: 2px; }
+}
+
+@utility container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+@utility section { @apply py-16 sm:py-24; }
+@utility eyebrow { @apply font-en text-sm tracking-[0.25em] uppercase text-dawn-600; }
+@utility h-section { @apply mt-2 text-2xl sm:text-3xl font-bold text-night-900; }
+@utility lead { @apply mt-4 text-muted; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-all duration-200; }
+@utility btn-primary { @apply btn bg-gradient-to-r from-dawn-500 to-dawn-400 text-white shadow-lg shadow-dawn-500/25 hover:-translate-y-0.5 hover:shadow-xl; }
+@utility btn-outline { @apply btn border border-night-700 text-night-800 hover:bg-night-900 hover:text-white; }
+@utility btn-ghost { @apply btn border border-white/40 text-white hover:bg-white/10; }
+@utility btn-line { @apply btn bg-line text-white hover:brightness-110; }
+@utility card { @apply rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5; }
+@utility badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold; }
+@utility prose-ja { @apply text-ink; }
+@utility field { @apply grid gap-1.5; }
+@utility field-label { @apply text-sm font-bold text-night-900; }
+@utility req { @apply ml-2 rounded bg-dawn-500 px-1.5 py-0.5 text-[10px] font-bold text-white align-middle; }
+@utility opt { @apply ml-2 rounded bg-black/10 px-1.5 py-0.5 text-[10px] font-bold text-muted align-middle; }
+@utility input { @apply w-full rounded-lg border border-black/15 bg-white px-4 py-3 text-base outline-none transition focus:border-dawn-400 focus:ring-4 focus:ring-dawn-200/60; }
+@utility hint { @apply text-xs text-muted; }
+
+@layer components {
+  .prose-ja h2 { @apply mt-10 mb-4 border-l-4 border-dawn-400 pl-3 text-xl font-bold text-night-900; }
+  .prose-ja h3 { @apply mt-8 mb-3 text-lg font-bold text-night-800; }
+  .prose-ja p { @apply my-4; }
+  .prose-ja ul { @apply my-4 list-disc pl-6; }
+  .prose-ja ol { @apply my-4 list-decimal pl-6; }
+  .prose-ja a { @apply text-night-600 underline underline-offset-4; }
+  .prose-ja table { @apply my-6 w-full text-sm; }
+  .prose-ja th { @apply bg-night-900/5 p-3 text-left align-top whitespace-nowrap; }
+  .prose-ja td { @apply border-b border-black/5 p-3 align-top; }
+}
+
+/* 夜明けのグラデーション */
+.bg-dawn-sky {
+  background:
+    radial-gradient(120% 80% at 50% 110%, rgba(251, 146, 60, 0.55) 0%, rgba(251, 146, 60, 0) 55%),
+    radial-gradient(80% 50% at 80% 100%, rgba(233, 196, 106, 0.35) 0%, rgba(233, 196, 106, 0) 60%),
+    linear-gradient(180deg, #070f22 0%, #0c1a3a 45%, #1d3567 75%, #4a4f7a 100%);
+}
+
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}

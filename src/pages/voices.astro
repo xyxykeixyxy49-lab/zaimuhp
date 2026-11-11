@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { voices } from '../data/content';
+---
+<Base title="受講者の声" description="戦略MG研修を受講された方の感想。">
+  <PageHero en="Voices" title="受講者の声" lead="経営者・士業・研修担当者・個人事業主の方から寄せられた声をご紹介します。" />
+  <section class="section">
+    <div class="container-x">
+      <p class="mb-8 rounded-xl bg-dawn-50 p-4 text-sm text-dawn-600">※現在は掲載イメージです。実際の受講者アンケートが集まり次第、ご本人の許可を得て差し替えます。</p>
+      <div class="columns-1 gap-5 md:columns-2 lg:columns-3">
+        {voices.map((v) => (
+          <figure class="card mb-5 break-inside-avoid reveal">
+            <span class="font-en text-5xl leading-none text-dawn-300">“</span>
+            <blockquote>{v.text}</blockquote>
+            <figcaption class="mt-4 text-sm font-bold text-night-800">{v.role}<span class="ml-2 font-normal text-muted">{v.area}会場</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</Base>

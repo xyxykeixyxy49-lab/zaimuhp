@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import SeminarCard from '../../components/SeminarCard.astro';
+import { site } from '../../data/site';
+import { isSampleMode, listSeminars } from '../../lib/seminars';
+
+export const prerender = false;
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300');
+
+const all = await listSeminars().catch((e) => (console.error(e), []));
+const areas = [...site.venues, 'オンライン'];
+const area = Astro.url.searchParams.get('area') ?? '';
+const list = area ? all.filter((s) => s.area === area) : all;
+const tabs = [{ label: 'すべて', value: '' }, ...areas.map((a) => ({ label: a, value: a }))];
+---
+<Base title="セミナー日程" description="東京・大阪・名古屋・宇都宮で開催する戦略MGセミナーの日程一覧とお申し込み。">
+  <PageHero en="Schedule" title="セミナー日程" lead="開催地を選んで、ご都合のよい日程からお申し込みください。" />
+  <section class="section">
+    <div class="container-x">
+      {isSampleMode() && <p class="mb-6 rounded-xl bg-dawn-50 p-4 text-sm text-dawn-600">※データベース未接続のため、サンプルの日程を表示しています。</p>}
+      <nav aria-label="開催地で絞り込み" class="-mx-4 overflow-x-auto px-4">
+        <ul class="flex gap-2">
+          {tabs.map((t) => (
+            <li>
+              <a
+                href={t.value ? `?area=${encodeURIComponent(t.value)}` : '/seminars/'}
+                class:list={['block whitespace-nowrap rounded-full px-5 py-2 text-sm font-bold ring-1 transition', area === t.value ? 'bg-night-900 text-white ring-night-900' : 'bg-white text-night-800 ring-black/10 hover:ring-dawn-400']}
+                aria-current={area === t.value ? 'page' : undefined}
+              >{t.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {list.length ? (
+        <div class="mt-8 grid gap-4 md:grid-cols-2">{list.map((s) => <SeminarCard s={s} />)}</div>
+      ) : (
+        <div class="mt-8 card text-center">
+          <p class="text-muted">{area ? `${area}の` : ''}受付中のセミナーは現在ありません。</p>
+          <p class="mt-2 text-sm">日程が決まり次第、公式LINEでお知らせします。ご希望の開催地・日程は <a href="/contact/" class="text-dawn-600 underline">お問い合わせ</a> からお寄せください。</p>
+        </div>
+      )}
+      <p class="mt-10 text-center text-sm text-muted">自社での開催をご希望の方は <a href="/corporate/" class="font-bold text-dawn-600 underline underline-offset-4">法人研修・出張研修</a> をご覧ください。</p>
+    </div>
+  </section>
+</Base>

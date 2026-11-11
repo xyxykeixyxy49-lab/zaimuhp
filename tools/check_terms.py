@@ -2,7 +2,7 @@
 """公開テキストの NGワード・商標表記チェッカー。
 
 使い方:
-    python3 tools/check_terms.py            # site/ 配下を検査
+    python3 tools/check_terms.py            # src/（原稿・コード）と dist/（ビルド後のHTML）を検査
     python3 tools/check_terms.py path ...   # 指定ファイル/ディレクトリを検査
 
 ルールの根拠は docs/brand-guideline.md を参照。
@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGET_SUFFIXES = {".html", ".htm", ".md", ".txt"}
+TARGET_SUFFIXES = {".html", ".htm", ".md", ".mdx", ".txt", ".astro", ".ts"}
 
 FOOTNOTE = "「戦略MG®」は、株式会社戦略MG研究所の登録商標です"
 
@@ -41,7 +41,7 @@ def strip_html(text: str) -> str:
 
 def check_file(path: Path) -> list[str]:
     raw = path.read_text(encoding="utf-8")
-    body = strip_html(raw) if path.suffix in {".html", ".htm"} else raw
+    body = strip_html(raw) if path.suffix in {".html", ".htm", ".astro"} else raw
     errors: list[str] = []
     for lineno, line in enumerate(body.splitlines(), 1):
         for pattern, msg in NG_RULES:
@@ -56,7 +56,7 @@ def check_file(path: Path) -> list[str]:
 
 
 def iter_files(args: list[str]):
-    targets = [Path(a).resolve() for a in args] or [ROOT / "site"]
+    targets = [Path(a).resolve() for a in args] or [p for p in (ROOT / "src", ROOT / "dist") if p.exists()]
     for t in targets:
         if t.is_dir():
             yield from (p for p in sorted(t.rglob("*")) if p.suffix in TARGET_SUFFIXES)

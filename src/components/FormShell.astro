@@ -1,0 +1,67 @@
+---
+// 全フォーム共通の外枠：hidden項目・スパム対策・同意チェック・送信ボタン・LINE(LIFF)連携
+import { PUBLIC_LIFF_ID, PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
+interface Props { type: 'seminar' | 'document' | 'contact' | 'corporate'; submitLabel: string }
+const { type, submitLabel } = Astro.props;
+---
+<form method="post" action="/api/submit" class="card grid gap-6 p-6 sm:p-10" data-liff={PUBLIC_LIFF_ID ?? ''}>
+  <input type="hidden" name="form_type" value={type} />
+  <input type="hidden" name="source" value="" />
+  <input type="hidden" name="line_id_token" value="" />
+  <div class="hidden" aria-hidden="true">
+    <label>Webサイト<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <slot />
+
+  <div class="grid gap-3 rounded-xl bg-paper p-4 text-sm">
+    <label class="flex items-start gap-3">
+      <input type="checkbox" name="privacy" required class="mt-1 size-5 accent-dawn-500" />
+      <span><a href="/privacy/" target="_blank" class="underline underline-offset-4">個人情報の取り扱い</a>に同意する<span class="req">必須</span></span>
+    </label>
+    <label class="flex items-start gap-3">
+      <input type="checkbox" name="consent" checked class="mt-1 size-5 accent-dawn-500" />
+      <span>セミナー日程などのご案内をメール・LINEで受け取る<span class="opt">任意</span></span>
+    </label>
+  </div>
+
+  {PUBLIC_TURNSTILE_SITE_KEY && (
+    <>
+      <div class="cf-turnstile" data-sitekey={PUBLIC_TURNSTILE_SITE_KEY} data-language="ja"></div>
+      <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    </>
+  )}
+
+  <button type="submit" class="btn-primary w-full !py-4 text-base sm:w-auto sm:justify-self-center sm:px-16">{submitLabel}</button>
+  <p class="text-center text-xs text-muted">送信後、ご入力のメールアドレスに受付確認メールをお送りします。</p>
+</form>
+
+<script>
+  // 送信中の二重送信防止
+  document.querySelectorAll<HTMLFormElement>('form[action="/api/submit"]').forEach((f) => {
+    f.addEventListener('submit', () => {
+      const b = f.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (b) { b.disabled = true; b.textContent = '送信しています…'; }
+    });
+  });
+
+  // 公式LINE内（LIFF）で開かれたときは、LINEアカウントと申込を自動で紐づける
+  const form = document.querySelector<HTMLFormElement>('form[data-liff]');
+  const liffId = form?.dataset.liff;
+  if (form && liffId && /Line\//i.test(navigator.userAgent)) {
+    const s = document.createElement('script');
+    s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+    s.onload = async () => {
+      try {
+        const liff = (window as any).liff;
+        await liff.init({ liffId });
+        if (liff.isLoggedIn()) {
+          const token = liff.getIDToken();
+          const input = form.querySelector<HTMLInputElement>('input[name="line_id_token"]');
+          if (token && input) input.value = token;
+        }
+      } catch (e) { console.warn('LIFF init failed', e); }
+    };
+    document.head.appendChild(s);
+  }
+</script>

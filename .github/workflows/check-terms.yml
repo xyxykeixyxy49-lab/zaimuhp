@@ -1,15 +1,21 @@
-name: 表記チェック（NGワード・登録商標）
+name: 表記チェック・ビルド
 
 on:
   push:
   pull_request:
 
 jobs:
-  check:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python3 tools/check_terms.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build   # NGワードチェック（src）→ ビルド
+      - run: python3 tools/check_terms.py   # ビルド後のHTMLも検査

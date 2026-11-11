@@ -1,0 +1,18 @@
+---
+interface Props { en: string; title: string; lead?: string; crumbs?: { href: string; label: string }[] }
+const { en, title, lead, crumbs = [] } = Astro.props;
+---
+<section class="bg-dawn-sky text-white">
+  <div class="container-x pt-14 pb-16 sm:pt-20 sm:pb-24">
+    <nav aria-label="パンくず" class="text-xs text-white/60">
+      <ol class="flex flex-wrap gap-1.5">
+        <li><a href="/" class="hover:text-white">ホーム</a></li>
+        {crumbs.map((c) => <li>/ <a href={c.href} class="hover:text-white">{c.label}</a></li>)}
+        <li aria-current="page">/ {title}</li>
+      </ol>
+    </nav>
+    <p class="mt-6 font-en text-sm tracking-[0.3em] text-dawn-300 uppercase">{en}</p>
+    <h1 class="mt-2 text-3xl sm:text-4xl font-black">{title}</h1>
+    {lead && <p class="mt-4 max-w-2xl text-white/80">{lead}</p>}
+  </div>
+</section>

@@ -1,0 +1,23 @@
+---
+import { site } from '../data/site';
+interface Props { light?: boolean }
+const { light = false } = Astro.props;
+---
+<span class="flex items-center gap-2.5">
+  <svg width="38" height="38" viewBox="0 0 48 48" aria-hidden="true">
+    <defs>
+      <linearGradient id="lg-sun" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fdba74" /><stop offset="1" stop-color="#f97316" />
+      </linearGradient>
+    </defs>
+    <rect width="48" height="48" rx="12" fill="#0c1a3a" />
+    <path d="M10 33a14 14 0 0 1 28 0Z" fill="url(#lg-sun)" />
+    <path d="M24 9v6M12.5 14.5l4 4M35.5 14.5l-4 4" stroke="#e9c46a" stroke-width="2.4" stroke-linecap="round" />
+    <path d="M7 33h34" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+    <path d="M14 39h20" stroke="#fff" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round" />
+  </svg>
+  <span class="leading-tight">
+    <span class:list={['block font-display text-[17px] font-black tracking-wider', light ? 'text-white' : 'text-night-900']}>{site.name}</span>
+    <span class:list={['block font-en text-[10px] tracking-[0.2em]', light ? 'text-white/60' : 'text-muted']}>DAWN OF FUTURE ACCOUNTING</span>
+  </span>
+</span>

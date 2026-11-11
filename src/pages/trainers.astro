@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+// 講師情報が決まったらここを編集（写真は public/images/trainers/ に置く）
+const trainers = [
+  { name: '講師名（準備中）', role: '代表講師', profile: '経歴・資格・研修実績を掲載します。', message: '受講者へのメッセージを掲載します。' },
+  { name: '講師名（準備中）', role: '講師／税理士', profile: '経歴・資格・研修実績を掲載します。', message: '受講者へのメッセージを掲載します。' },
+];
+---
+<Base title="講師紹介" description="未来会計の夜明けの講師紹介。">
+  <PageHero en="Trainers" title="講師紹介" lead="経営と会計の現場を知る講師が、一人ひとりの学びに伴走します。" />
+  <section class="section">
+    <div class="container-x grid gap-8">
+      {trainers.map((t) => (
+        <article class="card grid gap-8 p-8 md:grid-cols-[220px_1fr] reveal">
+          <div class="grid aspect-[4/5] place-items-center rounded-2xl bg-gradient-to-b from-night-800 to-dawn-400 text-white/80 text-sm">写真準備中</div>
+          <div>
+            <p class="text-sm font-bold text-dawn-600">{t.role}</p>
+            <h2 class="mt-1 text-2xl font-bold text-night-900">{t.name}</h2>
+            <h3 class="mt-6 font-bold text-night-900">プロフィール</h3>
+            <p class="mt-2 text-sm">{t.profile}</p>
+            <h3 class="mt-6 font-bold text-night-900">メッセージ</h3>
+            <p class="mt-2 text-sm">{t.message}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+  <CtaBand />
+</Base>

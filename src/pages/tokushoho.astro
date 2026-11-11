@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+const rows: [string, string][] = [
+  ['販売事業者', site.name],
+  ['運営責任者', site.representative],
+  ['所在地', site.address],
+  ['電話番号', `${site.tel}（お問い合わせはメールまたはフォームにてお願いします）`],
+  ['メールアドレス', site.email],
+  ['販売価格', '各セミナー・研修のページに記載の金額（税込）'],
+  ['商品代金以外の必要料金', '銀行振込の場合の振込手数料、会場までの交通費'],
+  ['お支払い方法', 'クレジットカード決済、銀行振込、請求書払い（法人のみ）'],
+  ['お支払い時期', 'クレジットカード：お申し込み時／銀行振込：お申し込みから7日以内'],
+  ['役務の提供時期', '各セミナー・研修の開催日'],
+  ['キャンセル・返金', '開催日の7日前まで：全額返金／6日前〜前日：参加費の50%／当日・無断欠席：返金なし（他日程への振替は1回まで無料）'],
+];
+---
+<Base title="特定商取引法に基づく表記">
+  <PageHero en="Legal" title="特定商取引法に基づく表記" />
+  <section class="section">
+    <div class="container-x max-w-3xl prose-ja">
+      <p class="rounded-xl bg-dawn-50 p-4 text-sm text-dawn-600">※ひな形です。正式な情報・キャンセル規定が決まり次第差し替えてください。</p>
+      <table><tbody>{rows.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}</tbody></table>
+    </div>
+  </section>
+</Base>

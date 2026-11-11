@@ -1,0 +1,21 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news', (n) => !n.data.draft);
+  return news.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<Base title={entry.data.title} description={entry.data.description}>
+  <PageHero en={entry.data.category === 'コラム' ? 'Column' : 'News'} title={entry.data.title} lead={entry.data.date.toLocaleDateString('ja-JP')} crumbs={[{ href: '/news/', label: 'お知らせ・コラム' }]} />
+  <article class="section">
+    <div class="container-x max-w-3xl prose-ja"><Content /></div>
+    <div class="container-x max-w-3xl mt-12"><a href="/news/" class="text-sm font-bold text-dawn-600">← 一覧へ戻る</a></div>
+  </article>
+  <CtaBand />
+</Base>

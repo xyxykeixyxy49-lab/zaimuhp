@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { PUBLIC_LINE_ADD_FRIEND_URL } from 'astro:env/client';
+import { getSeminar } from '../lib/seminars';
+
+export const prerender = false;
+const type = Astro.url.searchParams.get('type') ?? 'contact';
+const seminarId = Astro.url.searchParams.get('seminar');
+const seminar = type === 'seminar' && seminarId ? await getSeminar(seminarId) : null;
+const label: Record<string, string> = { seminar: 'お申し込み', document: '資料のご請求', contact: 'お問い合わせ', corporate: 'ご相談' };
+---
+<Base title="送信完了" noindex>
+  <PageHero en="Thank you" title={`${label[type] ?? 'お問い合わせ'}ありがとうございます`} />
+  <section class="section">
+    <div class="container-x max-w-2xl text-center">
+      <p>ご入力いただいたメールアドレスに受付確認メールをお送りしました。<br />担当者より2営業日以内にご連絡いたします。</p>
+      <p class="mt-2 text-sm text-muted">メールが届かない場合は、迷惑メールフォルダをご確認ください。</p>
+      {seminar?.paymentUrl && (
+        <div class="card mt-10">
+          <p class="font-bold text-night-900">参加費のお支払い</p>
+          <p class="mt-2 text-sm text-muted">クレジットカードで事前にお支払いいただけます。</p>
+          <a href={seminar.paymentUrl} class="btn-primary mt-4" target="_blank" rel="noopener">お支払いへ進む</a>
+        </div>
+      )}
+      {PUBLIC_LINE_ADD_FRIEND_URL && (
+        <div class="card mt-10">
+          <p class="font-bold text-night-900">公式LINEもぜひご登録ください</p>
+          <p class="mt-2 text-sm text-muted">当日のご案内や、復習に役立つ情報をお届けします。</p>
+          <a href={PUBLIC_LINE_ADD_FRIEND_URL} class="btn-line mt-4" target="_blank" rel="noopener">LINEで友だち追加</a>
+        </div>
+      )}
+      <a href="/" class="btn-outline mt-10">トップページへ戻る</a>
+    </div>
+  </section>
+</Base>

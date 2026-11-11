@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+const news = (await getCollection('news', (n) => !n.data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Base title="お知らせ・コラム" description="未来会計の夜明けからのお知らせ、開催報告、経営・会計コラム。">
+  <PageHero en="News & Column" title="お知らせ・コラム" />
+  <section class="section">
+    <div class="container-x max-w-3xl">
+      <ul class="divide-y divide-black/10 border-y border-black/10">
+        {news.map((n) => (
+          <li>
+            <a href={`/news/${n.id}/`} class="block py-6 hover:text-dawn-600">
+              <span class="flex items-center gap-3 text-sm text-muted">
+                <time datetime={n.data.date.toISOString()}>{n.data.date.toLocaleDateString('ja-JP')}</time>
+                <span class="badge bg-dawn-50 text-dawn-600">{n.data.category}</span>
+              </span>
+              <span class="mt-1 block text-lg font-bold">{n.data.title}</span>
+              {n.data.description && <span class="mt-1 block text-sm text-muted">{n.data.description}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

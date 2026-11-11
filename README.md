@@ -14,28 +14,40 @@
 
 ルール：**決めたことは Notion、作ったものは GitHub / ドライブ**。迷ったら Notion に記録してリンクを貼る。
 
+## 開発
+
+```bash
+npm install
+npm run dev        # http://localhost:4321 でプレビュー
+npm run build      # 表記チェック → 本番ビルド
+```
+
+- 設計：[docs/requirements.md](docs/requirements.md)（サイトマップ・機能・DB設計・LINE連携）
+- 公開・連携の設定：[docs/setup.md](docs/setup.md)
+- 表記ルール：[docs/brand-guideline.md](docs/brand-guideline.md)（必読）
+
 ## フォルダ構成
 
 ```
 zaimuhp/
-├── README.md               … このファイル
-├── docs/
-│   ├── brand-guideline.md  … 登録商標・NGワードの表記ルール（必読）
-│   └── project-log.md      … 作業ログ
-├── site/
-│   └── index.html          … トップページ（ドラフト）
-└── tools/
-    └── check_terms.py      … NGワード・商標表記チェッカー
+├── src/
+│   ├── pages/            … 各ページ（/seminars はNotionから表示）
+│   │   └── api/          … フォーム受付（submit.ts）・LINE Webhook
+│   ├── components/       … ヘッダー・フッター・フォーム部品など
+│   ├── data/             … 団体情報（site.ts）・文章データ（content.ts）
+│   ├── content/news/     … お知らせ・コラム（Markdownを追加すると掲載）
+│   ├── lib/              … Notion・顧客管理・LINE・メールの処理
+│   └── styles/global.css … デザイン（色・フォント）
+├── docs/                 … 設計書・設定手順・表記ガイドライン・作業ログ
+└── tools/check_terms.py  … NGワード・商標表記チェッカー
 ```
 
 ## 表記チェック
 
 ```bash
-python3 tools/check_terms.py          # site/ を検査
+npm run check:terms                  # src/ と dist/ を検査
 python3 tools/check_terms.py 原稿.md  # 任意のファイルを検査
 ```
-
-GitHub に push すると `.github/workflows/check-terms.yml` で自動検査される。
 
 ## 次にやること
 
@@ -44,5 +56,7 @@ GitHub に push すると `.github/workflows/check-terms.yml` で自動検査さ
 - [ ] ロゴの決定
 - [ ] 研修メニュー・料金の確定
 - [ ] 「戦略会計STRAC」等の要確認事項を戦略MG研究所に確認
-- [ ] ドメイン・公開方法（GitHub Pages 等）の決定
-- [ ] お問い合わせフォームの設置
+- [x] サイト本体・フォーム・顧客DB連携の実装（v1）
+- [ ] Cloudflare で公開・ドメイン取得（docs/setup.md）
+- [ ] Notion・メール・公式LINEの接続（docs/setup.md）
+- [ ] 講師情報・受講者の声・料金・特商法表記の確定

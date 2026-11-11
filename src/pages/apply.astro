@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FormShell from '../components/FormShell.astro';
+import PersonFields from '../components/PersonFields.astro';
+import { formatRange, isOpen, listSeminars } from '../lib/seminars';
+
+export const prerender = false;
+const seminars = (await listSeminars().catch(() => [])).filter(isOpen);
+const selected = Astro.url.searchParams.get('seminar') ?? '';
+---
+<Base title="セミナー申込" description="戦略MGセミナーのお申し込みフォーム。">
+  <PageHero en="Application" title="セミナー申込" lead="必要事項をご入力のうえ、送信してください。受付確認メールをお送りします。" crumbs={[{ href: '/seminars/', label: 'セミナー日程' }]} />
+  <section class="section">
+    <div class="container-x max-w-3xl">
+      {seminars.length ? (
+        <FormShell type="seminar" submitLabel="申し込む">
+          <label class="field">
+            <span class="field-label">参加するセミナー<span class="req">必須</span></span>
+            <select class="input" name="seminar_id" required>
+              <option value="">選択してください</option>
+              {seminars.map((s) => <option value={s.id} selected={s.id === selected}>{`【${s.area}】${formatRange(s)} ${s.title}${s.status === '残りわずか' ? '（残りわずか）' : ''}`}</option>)}
+            </select>
+          </label>
+          <PersonFields />
+          <div class="grid gap-6 sm:grid-cols-2">
+            <label class="field">
+              <span class="field-label">参加人数<span class="req">必須</span></span>
+              <select class="input" name="persons" required>{Array.from({ length: 10 }, (_, i) => <option value={i + 1}>{i + 1}名</option>)}</select>
+              <span class="hint">2名以上の場合は、同行者のお名前を備考欄にご記入ください。</span>
+            </label>
+            <label class="field">
+              <span class="field-label">戦略MGの受講経験<span class="opt">任意</span></span>
+              <select class="input" name="topic"><option value="">選択してください</option><option>はじめて</option><option>受講したことがある</option></select>
+            </label>
+          </div>
+          <label class="field">
+            <span class="field-label">お知りになったきっかけ<span class="opt">任意</span></span>
+            <select class="input" name="referral"><option value="">選択してください</option><option>インターネット検索</option><option>公式LINE</option><option>SNS</option><option>知人・取引先の紹介</option><option>税理士・会計事務所の紹介</option><option>その他</option></select>
+          </label>
+          <label class="field"><span class="field-label">備考・ご質問<span class="opt">任意</span></span><textarea class="input min-h-32" name="message" placeholder="同行者のお名前、領収書の宛名など"></textarea></label>
+        </FormShell>
+      ) : (
+        <div class="card text-center">
+          <p class="text-muted">現在、受付中のセミナーはありません。</p>
+          <a href="/contact/" class="btn-outline mt-6">開催のリクエストをする</a>
+        </div>
+      )}
+    </div>
+  </section>
+</Base>

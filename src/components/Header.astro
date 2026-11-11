@@ -1,0 +1,51 @@
+---
+import { nav, site } from '../data/site';
+import Logo from './Logo.astro';
+const path = Astro.url.pathname;
+---
+<header class="sticky top-0 z-40">
+  <div class="bg-night-950 text-[11px] sm:text-xs text-white/75">
+    <p class="container-x py-1.5 truncate">戦略MG®<sup>※</sup>を活用した、経営者・士業・研修担当者のための経営・財務研修</p>
+  </div>
+  <div class="border-b border-black/5 bg-white/90 backdrop-blur">
+    <div class="container-x flex h-16 items-center justify-between gap-4">
+      <a href="/" class="shrink-0" aria-label={`${site.name} トップへ`}><Logo /></a>
+      <nav class="ml-auto hidden xl:block" aria-label="メインメニュー">
+        <ul class="flex items-center gap-4 text-[13px] font-bold text-night-800 whitespace-nowrap">
+          {nav.map((n) => (
+            <li>
+              <a href={n.href} class:list={['py-2 transition hover:text-dawn-600', path.startsWith(n.href) && 'text-dawn-600']}>{n.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div class="ml-auto hidden sm:flex items-center gap-2 whitespace-nowrap xl:ml-0">
+        <a href="/document/" class="btn-outline !px-4 !py-2 text-xs">資料請求</a>
+        <a href="/seminars/" class="btn-primary !px-4 !py-2 text-xs">セミナー申込</a>
+      </div>
+      <button id="menu-btn" class="xl:hidden -mr-2 p-2 text-night-900" aria-controls="sp-menu" aria-expanded="false" aria-label="メニューを開く">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+      </button>
+    </div>
+  </div>
+  <div id="sp-menu" class="hidden xl:hidden border-b border-black/5 bg-white shadow-lg">
+    <nav class="container-x py-4" aria-label="スマホメニュー">
+      <ul class="grid grid-cols-2 gap-1 text-sm font-bold text-night-800">
+        {nav.map((n) => <li><a href={n.href} class="block rounded-lg px-3 py-3 hover:bg-dawn-50">{n.label}</a></li>)}
+      </ul>
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <a href="/document/" class="btn-outline">資料請求</a>
+        <a href="/seminars/" class="btn-primary">セミナー申込</a>
+        <a href="/contact/" class="btn-outline col-span-2">お問い合わせ</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<script>
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('sp-menu');
+  btn?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('hidden') === false;
+    btn.setAttribute('aria-expanded', String(open));
+  });
+</script>
