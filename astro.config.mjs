@@ -31,6 +31,8 @@ export default defineConfig({
       LINE_LOGIN_CHANNEL_ID: secret(),
       PUBLIC_LIFF_ID: pub(),
       PUBLIC_LINE_ADD_FRIEND_URL: pub(),
+      // サイトの状態：review（関係者確認用。検索除外・レビュー帯・フォームはテスト送信）／production（一般公開）
+      PUBLIC_SITE_MODE: envField.enum({ context: 'client', access: 'public', values: ['review', 'production'], default: 'review' }),
     },
   },
 });

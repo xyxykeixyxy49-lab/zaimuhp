@@ -1,6 +1,6 @@
 ---
 // 全フォーム共通の外枠：hidden項目・スパム対策・同意チェック・送信ボタン・LINE(LIFF)連携
-import { PUBLIC_LIFF_ID, PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
+import { PUBLIC_LIFF_ID, PUBLIC_SITE_MODE, PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
 interface Props { type: 'seminar' | 'document' | 'contact' | 'corporate'; submitLabel: string }
 const { type, submitLabel } = Astro.props;
 ---
@@ -11,6 +11,10 @@ const { type, submitLabel } = Astro.props;
   <div class="hidden" aria-hidden="true">
     <label>Webサイト<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
   </div>
+
+  {PUBLIC_SITE_MODE !== 'production' && (
+    <p class="rounded-xl bg-amber-100 p-4 text-sm font-bold text-amber-900">レビュー版のため、このフォームはテスト送信です。送信しても記録・メール送信はされません。</p>
+  )}
 
   <slot />
 

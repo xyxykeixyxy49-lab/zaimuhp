@@ -2,6 +2,7 @@
 // 顧客DBへ登録/更新 → 接点履歴を記録 → 管理者通知・自動返信メール → 完了ページへ。
 import type { APIRoute } from 'astro';
 import { getSecret } from 'astro:env/server';
+import { PUBLIC_SITE_MODE } from 'astro:env/client';
 import { site, trademarkNote } from '../../data/site';
 import { recordActivity, upsertContact, type ActivityType, type Channel } from '../../lib/crm';
 import { verifyIdToken } from '../../lib/line';
@@ -98,6 +99,15 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const body = details.map(([k, v]) => `${k}：${v}`).join('\n');
   const source = s(form.get('source'), 500);
 
+  const q = new URLSearchParams({ type: kind });
+  if (seminar) q.set('seminar', seminar.id);
+
+  // レビュー版モード：顧客DBへの記録・メール送信はせず、完了画面だけ表示する
+  if (PUBLIC_SITE_MODE !== 'production') {
+    q.set('test', '1');
+    return redirect(`/thanks/?${q}`, 303);
+  }
+
   const token = getSecret('NOTION_TOKEN');
   if (token) {
     try {
@@ -141,7 +151,5 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const pay = seminar?.paymentUrl ? `\n\n▼参加費のお支払いはこちら\n${seminar.paymentUrl}\n` : '';
   await sendMail(email, `【${site.name}】${type}を受け付けました`, `${greeting}${body}${pay}\n\n――――――――――\n${site.name}\n${site.email}\n${trademarkNote}`);
 
-  const q = new URLSearchParams({ type: kind });
-  if (seminar) q.set('seminar', seminar.id);
   return redirect(`/thanks/?${q}`, 303);
 };

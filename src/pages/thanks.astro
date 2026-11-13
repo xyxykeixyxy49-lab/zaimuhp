@@ -6,6 +6,7 @@ import { getSeminar } from '../lib/seminars';
 
 export const prerender = false;
 const type = Astro.url.searchParams.get('type') ?? 'contact';
+const isTest = Astro.url.searchParams.get('test') === '1';
 const seminarId = Astro.url.searchParams.get('seminar');
 const seminar = type === 'seminar' && seminarId ? await getSeminar(seminarId) : null;
 const label: Record<string, string> = { seminar: 'お申し込み', document: '資料のご請求', contact: 'お問い合わせ', corporate: 'ご相談' };
@@ -14,6 +15,7 @@ const label: Record<string, string> = { seminar: 'お申し込み', document: '�
   <PageHero en="Thank you" title={`${label[type] ?? 'お問い合わせ'}ありがとうございます`} />
   <section class="section">
     <div class="container-x max-w-2xl text-center">
+      {isTest && <p class="mb-8 rounded-xl bg-amber-100 p-4 text-sm font-bold text-amber-900">【テスト送信】レビュー版のため、実際の記録・メール送信は行われていません。以下は本番での表示イメージです。</p>}
       <p>ご入力いただいたメールアドレスに受付確認メールをお送りしました。<br />担当者より2営業日以内にご連絡いたします。</p>
       <p class="mt-2 text-sm text-muted">メールが届かない場合は、迷惑メールフォルダをご確認ください。</p>
       {seminar?.paymentUrl && (
