@@ -5,20 +5,26 @@
   --font-display: "Zen Kaku Gothic New", "Noto Sans JP", sans-serif;
   --font-en: "Cormorant Garamond", "Times New Roman", serif;
 
-  /* 夜明けの空：夜の紺 → 朝焼けの橙 */
-  --color-night-950: #070f22;
-  --color-night-900: #0c1a3a;
-  --color-night-800: #132650;
-  --color-night-700: #1d3567;
-  --color-night-600: #2b4a85;
-  --color-dawn-50: #fff7ed;
-  --color-dawn-100: #ffedd5;
-  --color-dawn-200: #fed7aa;
-  --color-dawn-300: #fdba74;
-  --color-dawn-400: #fb923c;
-  --color-dawn-500: #f97316;
-  --color-dawn-600: #ea580c;
-  --color-gold-400: #e9c46a;
+  /* ブランドカラー（パートナー企業ロゴに合わせる）
+     濃紺 #00006E／ブルー #035DF0／オレンジ #FD6E22／ブロンズ #AB5E00 */
+  --color-night-950: #00003f;
+  --color-night-900: #00006e;
+  --color-night-800: #0d1585;
+  --color-night-700: #1a2a9c;
+  --color-night-600: #2a43b6;
+  --color-azure-50: #eef4ff;
+  --color-azure-100: #dae7ff;
+  --color-azure-300: #7eaafa;
+  --color-azure-500: #035df0;
+  --color-azure-600: #0249c4;
+  --color-dawn-50: #fff4ec;
+  --color-dawn-100: #ffe5d3;
+  --color-dawn-200: #ffc8a6;
+  --color-dawn-300: #ffa36e;
+  --color-dawn-400: #fe8743;
+  --color-dawn-500: #fd6e22;
+  --color-dawn-600: #c9500c;
+  --color-gold-400: #ab5e00;
   --color-ink: #1c2434;
   --color-muted: #5b6577;
   --color-paper: #fbfaf7;
@@ -34,7 +40,7 @@
 
 @utility container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
 @utility section { @apply py-16 sm:py-24; }
-@utility eyebrow { @apply font-en text-sm tracking-[0.25em] uppercase text-dawn-600; }
+@utility eyebrow { @apply font-en text-sm tracking-[0.25em] uppercase text-azure-500; }
 @utility h-section { @apply mt-2 text-2xl sm:text-3xl font-bold text-night-900; }
 @utility lead { @apply mt-4 text-muted; }
 @utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-all duration-200; }
@@ -67,9 +73,9 @@
 /* 夜明けのグラデーション */
 .bg-dawn-sky {
   background:
-    radial-gradient(120% 80% at 50% 110%, rgba(251, 146, 60, 0.55) 0%, rgba(251, 146, 60, 0) 55%),
-    radial-gradient(80% 50% at 80% 100%, rgba(233, 196, 106, 0.35) 0%, rgba(233, 196, 106, 0) 60%),
-    linear-gradient(180deg, #070f22 0%, #0c1a3a 45%, #1d3567 75%, #4a4f7a 100%);
+    radial-gradient(120% 80% at 50% 115%, rgba(253, 110, 34, 0.6) 0%, rgba(253, 110, 34, 0) 55%),
+    radial-gradient(70% 50% at 85% 105%, rgba(171, 94, 0, 0.35) 0%, rgba(171, 94, 0, 0) 60%),
+    linear-gradient(180deg, #00003f 0%, #00006e 40%, #0a2fb0 72%, #035df0 100%);
 }
 
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }

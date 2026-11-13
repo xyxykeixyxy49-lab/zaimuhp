@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import CtaBand from '../components/CtaBand.astro';
 import SeminarCard from '../components/SeminarCard.astro';
-import { faqs, flow, programs, voices } from '../data/content';
+import { faqs, flow, mvv, programs, voices } from '../data/content';
 import { site } from '../data/site';
 import { listSeminars } from '../lib/seminars';
 
@@ -48,6 +48,28 @@ const audiences = [
         <a href="/seminars/" class="btn-primary !px-8 !py-4 text-base">セミナー日程を見る</a>
         <a href="/document/" class="btn-ghost !px-8 !py-4 text-base">資料請求（無料）</a>
       </div>
+    </div>
+  </section>
+
+  <!-- ミッション -->
+  <section class="section bg-white">
+    <div class="container-x grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
+      <div class="reveal">
+        <p class="eyebrow">Our Mission</p>
+        <p class="mt-4 font-display text-2xl font-bold leading-relaxed text-night-900 sm:text-[2rem]">{mvv.mission.title}</p>
+        <div class="mt-6 grid gap-2 border-l-4 border-dawn-500 pl-5 text-muted">
+          {mvv.mission.body.map((b) => <p>{b}</p>)}
+        </div>
+        <a href="/about/" class="btn-outline mt-8">ミッション・ビジョン・バリュー</a>
+      </div>
+      <ul class="grid gap-3 reveal">
+        {mvv.values.map((v, i) => (
+          <li class="flex items-center gap-4 rounded-2xl bg-paper px-5 py-4">
+            <span class="grid size-9 shrink-0 place-items-center rounded-full bg-azure-500 font-en text-lg font-semibold text-white">{i + 1}</span>
+            <span class="text-sm font-bold text-night-900">{v.title}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
