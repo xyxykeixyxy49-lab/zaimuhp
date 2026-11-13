@@ -39,14 +39,14 @@ zaimuhp/
 │   ├── lib/              … Notion・顧客管理・LINE・メールの処理
 │   └── styles/global.css … デザイン（色・フォント）
 ├── docs/                 … 設計書・設定手順・表記ガイドライン・作業ログ
-└── tools/check_terms.py  … NGワード・商標表記チェッカー
+└── tools/check-terms.mjs  … NGワード・商標表記チェッカー
 ```
 
 ## 表記チェック
 
 ```bash
 npm run check:terms                  # src/ と dist/ を検査
-python3 tools/check_terms.py 原稿.md  # 任意のファイルを検査
+node tools/check-terms.mjs 原稿.md  # 任意のファイルを検査
 ```
 
 ## 次にやること
