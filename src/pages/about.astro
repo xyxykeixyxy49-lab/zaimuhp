@@ -2,46 +2,66 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import CtaBand from '../components/CtaBand.astro';
+import { mvv } from '../data/content';
 import { site } from '../data/site';
-const values = [
-  { en: 'Experience', title: '体験から学ぶ', body: '知識を聞くだけではなく、自分で決めて、自分で決算する。体験した学びは、現場で使える力になります。' },
-  { en: 'Numbers', title: '数字を共通言語に', body: '経営者・社員・士業が同じ数字で語り合える組織は強い。会計を「経営の言葉」として届けます。' },
-  { en: 'Future', title: '未来を描く会計へ', body: '過去を記録する会計から、未来の戦略を描く会計へ。一人ひとりの経営に夜明けをもたらします。' },
-];
 ---
-<Base title="私たちについて" description={`${site.name}の理念と活動内容。戦略MGを活用した経営・財務研修を通じて、数字で未来を描ける経営者・組織を増やします。`}>
-  <PageHero en="About Us" title="私たちについて" lead="会計を、過去の記録から「未来を描く道具」へ。" />
+<Base title="私たちについて" description={`${site.name}のミッション・ビジョン・バリュー。${mvv.mission.title}`}>
+  <PageHero en="About Us" title="私たちについて" lead={mvv.mission.title} />
 
+  <!-- Mission -->
   <section class="section">
-    <div class="container-x grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+    <div class="container-x grid gap-10 lg:grid-cols-[220px_1fr]">
       <div>
         <p class="eyebrow">Mission</p>
-        <h2 class="h-section">数字で未来を描ける経営者を、<br class="hidden sm:inline" />ひとりでも多く。</h2>
+        <h2 class="h-section">ミッション</h2>
       </div>
-      <div class="prose-ja">
-        <p>多くの経営者が「決算書は税理士に任せている」「数字は苦手」と口にします。けれど、会社の未来を決める意思決定は、いつも数字とともにあります。</p>
-        <p>{site.name}は、戦略MG®※ を活用した体験型の研修を通じて、経営者・研修担当者・税理士・会計士・個人事業主の皆さまが「数字がわかる」から「数字で決められる」へ進むお手伝いをします。</p>
-        <p>夜明け前がいちばん暗いと言われます。数字への苦手意識という暗がりを抜けて、経営の景色が明るく見える瞬間を、ひとりでも多くの方に届けたい。それが私たちの名前に込めた想いです。</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section bg-white">
-    <div class="container-x">
-      <div class="text-center"><p class="eyebrow">Values</p><h2 class="h-section">大切にしていること</h2></div>
-      <div class="mt-12 grid gap-5 md:grid-cols-3">
-        {values.map((v) => (
-          <div class="card reveal">
-            <p class="font-en text-sm tracking-[0.2em] text-dawn-600 uppercase">{v.en}</p>
-            <h3 class="mt-2 text-xl font-bold text-night-900">{v.title}</h3>
-            <p class="mt-3 text-sm text-muted">{v.body}</p>
-          </div>
-        ))}
+      <div class="reveal">
+        <p class="font-display text-2xl font-bold leading-relaxed text-night-900 sm:text-3xl">{mvv.mission.title}</p>
+        <div class="mt-6 grid gap-3 border-l-4 border-dawn-500 pl-5 text-muted">
+          {mvv.mission.body.map((b) => <p>{b}</p>)}
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- Vision -->
+  <section class="section bg-night-900 text-white">
+    <div class="container-x grid gap-10 lg:grid-cols-[220px_1fr]">
+      <div>
+        <p class="eyebrow !text-azure-300">Vision</p>
+        <h2 class="mt-2 text-2xl font-bold sm:text-3xl">ビジョン</h2>
+      </div>
+      <div class="reveal">
+        <p class="font-display text-2xl font-bold leading-relaxed sm:text-3xl">{mvv.vision.title}</p>
+        <div class="mt-6 grid gap-3 border-l-4 border-dawn-500 pl-5 text-white/75">
+          {mvv.vision.body.map((b) => <p>{b}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value -->
   <section class="section">
+    <div class="container-x">
+      <div class="text-center">
+        <p class="eyebrow">Value</p>
+        <h2 class="h-section">大切にする5つの価値観</h2>
+      </div>
+      <ol class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {mvv.values.map((v, i) => (
+          <li class="card relative overflow-hidden reveal">
+            <span class="absolute -right-2 -top-4 font-en text-8xl font-semibold text-azure-50" aria-hidden="true">{i + 1}</span>
+            <p class="relative font-en text-sm tracking-[0.2em] text-dawn-600">VALUE {String(i + 1).padStart(2, '0')}</p>
+            <h3 class="relative mt-2 text-lg font-bold text-night-900">{v.title}</h3>
+            <p class="relative mt-3 text-sm text-muted">{v.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 団体概要 -->
+  <section class="section bg-white">
     <div class="container-x max-w-3xl">
       <div class="text-center"><p class="eyebrow">Profile</p><h2 class="h-section">団体概要</h2></div>
       <div class="prose-ja mt-8">
@@ -52,7 +72,7 @@ const values = [
             <tr><th>設立</th><td>{site.founded}</td></tr>
             <tr><th>所在地</th><td>{site.address}</td></tr>
             <tr><th>主な開催地</th><td>{site.venues.join('・')}（オンライン開催も準備中）</td></tr>
-            <tr><th>事業内容</th><td>戦略MGを活用した公開セミナーの開催／企業向け出張研修／税理士・会計士向け研修／経営・財務に関する勉強会の開催</td></tr>
+            <tr><th>事業内容</th><td>戦略MG®※ を活用した公開セミナーの開催／企業向け出張研修／税理士・会計士向け研修／経営・財務に関する勉強会の開催</td></tr>
             <tr><th>お問い合わせ</th><td>{site.email}</td></tr>
           </tbody>
         </table>
