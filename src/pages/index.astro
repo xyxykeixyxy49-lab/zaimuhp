@@ -1,0 +1,234 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CtaBand from '../components/CtaBand.astro';
+import SeminarCard from '../components/SeminarCard.astro';
+import { faqs, flow, programs, voices } from '../data/content';
+import { site } from '../data/site';
+import { listSeminars } from '../lib/seminars';
+
+export const prerender = false;
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300');
+
+const seminars = (await listSeminars().catch(() => [])).slice(0, 4);
+const news = (await getCollection('news', (n) => !n.data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const audiences = [
+  { who: '経営者・後継者', need: '決算書を「経営の道具」として使いこなし、戦略を自分で描きたい。', icon: 'M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9 5.5-.8z' },
+  { who: '企業の研修担当者', need: '社員に数字の感覚と経営者目線を、楽しく身につけてほしい。', icon: 'M4 19v-1a5 5 0 0 1 10 0v1M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM16 11a3 3 0 1 0 0-6M20 19v-1a5 5 0 0 0-3-4.6' },
+  { who: '税理士・公認会計士', need: '経営者の意思決定を体験し、顧問先への助言の質を高めたい。', icon: 'M5 4h14v16H5zM8 8h8M8 12h8M8 16h5' },
+  { who: '個人事業主', need: '数字への苦手意識をなくし、値決めや投資の判断に自信を持ちたい。', icon: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6' },
+];
+---
+<Base>
+  <!-- ヒーロー -->
+  <section class="relative overflow-hidden bg-dawn-sky text-white">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute -bottom-40 left-1/2 size-[44rem] -translate-x-1/2 rounded-full bg-dawn-400/50 blur-3xl"></div>
+      <svg class="absolute inset-x-0 bottom-0 w-full text-paper" viewBox="0 0 1440 80" preserveAspectRatio="none"><path fill="currentColor" d="M0 80h1440V40C1200 70 960 80 720 60S240 10 0 40z" /></svg>
+      {Array.from({ length: 24 }).map((_, i) => (
+        <span class="absolute size-0.5 rounded-full bg-white/70" style={`left:${(i * 41) % 100}%;top:${(i * 23) % 45}%;opacity:${0.3 + ((i * 7) % 6) / 10}`}></span>
+      ))}
+    </div>
+    <div class="container-x relative pt-20 pb-36 sm:pt-28 sm:pb-44">
+      <p class="font-en text-sm tracking-[0.35em] text-dawn-300 uppercase reveal">Dawn of Future Accounting</p>
+      <h1 class="mt-5 text-[2rem] leading-snug font-black sm:text-5xl sm:leading-tight reveal">
+        数字がわかると、<br />経営の景色が変わる。
+      </h1>
+      <p class="mt-6 max-w-xl text-white/85 sm:text-lg reveal">
+        ゲームで会社を経営し、自分の手で決算をする。<br class="hidden sm:inline" />
+        戦略MGで、経営・財務・決算書が「わかる」から「使える」へ。
+      </p>
+      <div class="mt-8 flex flex-wrap gap-2 reveal">
+        {site.venues.map((v) => <span class="rounded-full bg-white/10 px-3 py-1 text-xs ring-1 ring-white/20">{v}開催</span>)}
+      </div>
+      <div class="mt-10 grid gap-3 sm:flex reveal">
+        <a href="/seminars/" class="btn-primary !px-8 !py-4 text-base">セミナー日程を見る</a>
+        <a href="/document/" class="btn-ghost !px-8 !py-4 text-base">資料請求（無料）</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- こんな方へ -->
+  <section class="section">
+    <div class="container-x">
+      <div class="text-center reveal">
+        <p class="eyebrow">For You</p>
+        <h2 class="h-section">こんな方のための研修です</h2>
+        <p class="lead">経営戦略の力をアップデートしたい方、財務・会計・決算書の理解を深めたい方へ。</p>
+      </div>
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {audiences.map((a) => (
+          <div class="card reveal">
+            <span class="grid size-12 place-items-center rounded-xl bg-dawn-50 text-dawn-600">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={a.icon} /></svg>
+            </span>
+            <h3 class="mt-4 text-lg font-bold text-night-900">{a.who}</h3>
+            <p class="mt-2 text-sm text-muted">{a.need}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 戦略MGとは -->
+  <section class="section bg-white">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-2">
+      <div class="reveal">
+        <p class="eyebrow">About the Program</p>
+        <h2 class="h-section">戦略MGとは</h2>
+        <p class="mt-6">
+          戦略MGは、受講者一人ひとりが社長となって会社を経営する、ボードゲーム形式の経営シミュレーション研修です。
+          材料の仕入れ、製品の製造・販売、人の採用、設備投資――。限られた資金と時間の中で意思決定を重ね、期末には自分の手で決算書をつくります。
+        </p>
+        <p class="mt-4">
+          「なぜ利益が出たのか」「なぜお金が足りないのか」。教科書では見えにくい答えが、自分の意思決定の結果として目の前に現れます。
+        </p>
+        <a href="/program/" class="btn-outline mt-8">研修プログラムを見る</a>
+      </div>
+      <ol class="grid gap-4 reveal">
+        {[
+          ['経営を体験する', '社長として意思決定を重ね、他の受講者と同じ市場で競い合います。'],
+          ['自分で決算する', '期末ごとに自らの手で損益計算書・貸借対照表を作成します。'],
+          ['戦略を磨く', '結果を振り返り、次の期の戦略を立てて実行するサイクルを回します。'],
+        ].map(([t, b], i) => (
+          <li class="flex gap-5 rounded-2xl bg-paper p-6">
+            <span class="font-en text-4xl font-semibold text-dawn-400">{String(i + 1).padStart(2, '0')}</span>
+            <span><span class="block font-display text-lg font-bold text-night-900">{t}</span><span class="text-sm text-muted">{b}</span></span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- プログラム -->
+  <section class="section">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-4 reveal">
+        <div>
+          <p class="eyebrow">Programs</p>
+          <h2 class="h-section">研修プログラム</h2>
+        </div>
+        <a href="/program/" class="text-sm font-bold text-dawn-600">すべてのプログラム →</a>
+      </div>
+      <div class="mt-10 grid gap-5 lg:grid-cols-3">
+        {programs.map((p) => (
+          <a href={`/program/#${p.slug}`} class="card group reveal transition hover:-translate-y-1 hover:shadow-lg">
+            <p class="font-en text-xs tracking-[0.2em] text-dawn-600 uppercase">{p.en}</p>
+            <h3 class="mt-2 text-lg font-bold text-night-900">{p.name}</h3>
+            <p class="mt-1 text-xs text-muted">対象：{p.target}</p>
+            <p class="mt-4 text-sm">{p.summary}</p>
+            <p class="mt-4 text-sm font-bold text-dawn-600">詳しく見る →</p>
+          </a>
+        ))}
+      </div>
+      <a href="/corporate/" class="mt-6 flex flex-col items-start gap-2 rounded-2xl bg-night-900 p-6 text-white transition hover:bg-night-800 sm:flex-row sm:items-center sm:justify-between reveal">
+        <span><span class="block font-display text-lg font-bold">法人研修・出張研修</span><span class="text-sm text-white/70">貴社の会議室で、社員研修として実施します。人数・目的に合わせてご提案します。</span></span>
+        <span class="btn-primary shrink-0">法人研修について</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- セミナー日程 -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-4 reveal">
+        <div>
+          <p class="eyebrow">Schedule</p>
+          <h2 class="h-section">開催予定のセミナー</h2>
+          <p class="lead">東京・大阪・名古屋・宇都宮で開催しています。</p>
+        </div>
+        <a href="/seminars/" class="text-sm font-bold text-dawn-600">日程一覧へ →</a>
+      </div>
+      {seminars.length ? (
+        <div class="mt-10 grid gap-4 md:grid-cols-2">{seminars.map((s) => <SeminarCard s={s} />)}</div>
+      ) : (
+        <p class="mt-10 card text-center text-muted">現在、受付中のセミナーはありません。最新情報は公式LINEでお知らせします。</p>
+      )}
+    </div>
+  </section>
+
+  <!-- 受講の流れ -->
+  <section class="section">
+    <div class="container-x">
+      <div class="text-center reveal">
+        <p class="eyebrow">Flow</p>
+        <h2 class="h-section">お申し込みから受講まで</h2>
+      </div>
+      <ol class="mt-12 grid gap-5 md:grid-cols-4">
+        {flow.map((f) => (
+          <li class="card relative reveal">
+            <span class="font-en text-5xl font-semibold text-dawn-200">{f.step}</span>
+            <h3 class="mt-2 font-bold text-night-900">{f.title}</h3>
+            <p class="mt-2 text-sm text-muted">{f.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 受講者の声 -->
+  <section class="section bg-night-900 text-white">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-4 reveal">
+        <div>
+          <p class="eyebrow !text-dawn-300">Voices</p>
+          <h2 class="mt-2 text-2xl sm:text-3xl font-bold">受講者の声</h2>
+          <p class="mt-2 text-xs text-white/50">※掲載イメージです。実際の受講者アンケートが集まり次第差し替えます。</p>
+        </div>
+        <a href="/voices/" class="text-sm font-bold text-dawn-300">もっと見る →</a>
+      </div>
+      <div class="mt-10 grid gap-5 md:grid-cols-3">
+        {voices.slice(0, 3).map((v) => (
+          <figure class="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 reveal">
+            <blockquote class="text-white/90">“{v.text}”</blockquote>
+            <figcaption class="mt-4 text-sm text-dawn-300">{v.role}（{v.area}）</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ・お知らせ -->
+  <section class="section">
+    <div class="container-x grid gap-14 lg:grid-cols-2">
+      <div class="reveal">
+        <p class="eyebrow">FAQ</p>
+        <h2 class="h-section">よくある質問</h2>
+        <div class="mt-8 grid gap-3">
+          {faqs.slice(0, 4).map((f) => (
+            <details class="card group !p-0">
+              <summary class="flex cursor-pointer list-none items-start gap-3 p-5 font-bold text-night-900">
+                <span class="text-dawn-500">Q.</span><span class="flex-1">{f.q}</span><span class="transition group-open:rotate-45 text-dawn-500">＋</span>
+              </summary>
+              <p class="px-5 pb-5 pl-11 text-sm text-muted">{f.a}</p>
+            </details>
+          ))}
+        </div>
+        <a href="/faq/" class="mt-6 inline-block text-sm font-bold text-dawn-600">すべての質問を見る →</a>
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">News</p>
+        <h2 class="h-section">お知らせ・コラム</h2>
+        <ul class="mt-8 divide-y divide-black/10 border-y border-black/10">
+          {news.map((n) => (
+            <li>
+              <a href={`/news/${n.id}/`} class="flex flex-col gap-1 py-5 hover:text-dawn-600 sm:flex-row sm:gap-6">
+                <span class="flex shrink-0 items-center gap-3 text-sm text-muted">
+                  <time datetime={n.data.date.toISOString()}>{n.data.date.toLocaleDateString('ja-JP')}</time>
+                  <span class="badge bg-dawn-50 text-dawn-600">{n.data.category}</span>
+                </span>
+                <span class="font-bold">{n.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/news/" class="mt-6 inline-block text-sm font-bold text-dawn-600">一覧を見る →</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FormShell from '../components/FormShell.astro';
+import PersonFields from '../components/PersonFields.astro';
+import { documents } from '../data/site';
+const descriptions: Record<string, string> = {
+  研修案内パンフレット: '研修の内容・特長・受講者の声をまとめた案内資料',
+  法人研修の料金表: '出張研修のプランと料金の目安',
+  セミナー日程表: '直近3か月の公開セミナー開催予定',
+};
+---
+<Base title="資料請求" description="戦略MG研修の案内資料・法人研修の料金表・セミナー日程表を無料でお送りします。">
+  <PageHero en="Documents" title="資料請求（無料）" lead="ご希望の資料を、メールにてお送りします（PDF）。郵送をご希望の方は送付先をご記入ください。" />
+  <section class="section">
+    <div class="container-x max-w-3xl">
+      <FormShell type="document" submitLabel="資料を請求する">
+        <fieldset class="field">
+          <legend class="field-label mb-2">ご希望の資料<span class="req">必須</span></legend>
+          <div class="grid gap-3">
+            {documents.map((d, i) => (
+              <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-black/10 bg-white p-4 has-[:checked]:border-dawn-400 has-[:checked]:bg-dawn-50">
+                <input type="checkbox" name="documents" value={d} checked={i === 0} class="mt-1 size-5 accent-dawn-500" />
+                <span><span class="block font-bold text-night-900">{d}</span><span class="text-sm text-muted">{descriptions[d]}</span></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <PersonFields />
+        <label class="field"><span class="field-label">郵送先住所<span class="opt">任意</span></span><input class="input" name="address" autocomplete="street-address" placeholder="郵送をご希望の場合のみ" /></label>
+        <label class="field"><span class="field-label">ご質問など<span class="opt">任意</span></span><textarea class="input min-h-28" name="message"></textarea></label>
+      </FormShell>
+    </div>
+  </section>
+</Base>
+<script>
+  // 資料が1つも選ばれていないときは送信させない
+  const form = document.querySelector('form');
+  form?.addEventListener('submit', (e) => {
+    if (!form.querySelector('input[name="documents"]:checked')) {
+      e.preventDefault();
+      alert('ご希望の資料を1つ以上お選びください。');
+    }
+  }, { capture: true });
+</script>

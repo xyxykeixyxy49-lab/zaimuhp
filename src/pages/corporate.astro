@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FormShell from '../components/FormShell.astro';
+import PersonFields from '../components/PersonFields.astro';
+import { corporatePlans } from '../data/content';
+---
+<Base title="法人研修・出張研修" description="戦略MGを活用した企業向け研修。新入社員から管理職、経営者まで、目的に合わせて貴社で実施します。">
+  <PageHero en="Corporate Training" title="法人研修・出張研修" lead="貴社の会議室や研修施設で、目的と人数に合わせた戦略MG研修を実施します。" />
+
+  <section class="section">
+    <div class="container-x">
+      <div class="text-center"><p class="eyebrow">Plans</p><h2 class="h-section">研修テーマの例</h2></div>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2">
+        {corporatePlans.map((c) => (
+          <div class="card reveal"><h3 class="text-lg font-bold text-night-900">{c.name}</h3><p class="mt-2 text-sm text-muted">{c.body}</p></div>
+        ))}
+      </div>
+
+      <div class="mt-16 grid gap-6 md:grid-cols-3">
+        {[
+          ['人数', '6名から数十名まで。人数に応じて講師・道具を手配します。'],
+          ['日程', '1日〜2日。半日×複数回の分割実施もご相談ください。'],
+          ['場所', '東京・大阪・名古屋・宇都宮を中心に全国へ出張します。'],
+        ].map(([t, b]) => (
+          <div class="rounded-2xl bg-night-900 p-6 text-white"><p class="font-display text-lg font-bold text-dawn-300">{t}</p><p class="mt-2 text-sm text-white/80">{b}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="form" class="section bg-white">
+    <div class="container-x max-w-3xl">
+      <div class="text-center"><p class="eyebrow">Contact</p><h2 class="h-section">法人研修のご相談</h2><p class="lead">内容・お見積もりのご相談は無料です。2営業日以内に担当よりご連絡します。</p></div>
+      <div class="mt-10">
+        <FormShell type="corporate" submitLabel="この内容で相談する">
+          <PersonFields companyRequired />
+          <div class="grid gap-6 sm:grid-cols-2">
+            <label class="field"><span class="field-label">参加予定人数<span class="opt">任意</span></span><input class="input" type="number" name="persons" min="1" max="50" placeholder="10" /></label>
+            <label class="field"><span class="field-label">開催希望時期<span class="opt">任意</span></span><input class="input" name="timing" placeholder="2027年2月頃" /></label>
+          </div>
+          <label class="field"><span class="field-label">ご相談内容<span class="req">必須</span></span><textarea class="input min-h-40" name="message" required placeholder="対象者、研修の目的、ご予算感など"></textarea></label>
+        </FormShell>
+      </div>
+    </div>
+  </section>
+</Base>

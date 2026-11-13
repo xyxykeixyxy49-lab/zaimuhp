@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FormShell from '../components/FormShell.astro';
+import PersonFields from '../components/PersonFields.astro';
+const topics = ['セミナーについて', '法人研修について', '取材・講演のご依頼', 'その他'];
+---
+<Base title="お問い合わせ" description="未来会計の夜明けへのお問い合わせフォーム。">
+  <PageHero en="Contact" title="お問い合わせ" lead="セミナー・研修に関するご質問、開催のご要望など、お気軽にお寄せください。" />
+  <section class="section">
+    <div class="container-x max-w-3xl">
+      <FormShell type="contact" submitLabel="送信する">
+        <label class="field">
+          <span class="field-label">お問い合わせの種類<span class="req">必須</span></span>
+          <select class="input" name="topic" required>
+            <option value="">選択してください</option>
+            {topics.map((t) => <option value={t}>{t}</option>)}
+          </select>
+        </label>
+        <PersonFields />
+        <label class="field">
+          <span class="field-label">お知りになったきっかけ<span class="opt">任意</span></span>
+          <select class="input" name="referral"><option value="">選択してください</option><option>インターネット検索</option><option>公式LINE</option><option>SNS</option><option>知人・取引先の紹介</option><option>税理士・会計事務所の紹介</option><option>その他</option></select>
+        </label>
+        <label class="field"><span class="field-label">お問い合わせ内容<span class="req">必須</span></span><textarea class="input min-h-40" name="message" required></textarea></label>
+      </FormShell>
+    </div>
+  </section>
+</Base>

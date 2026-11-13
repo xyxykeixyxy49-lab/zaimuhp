@@ -1,0 +1,33 @@
+---
+import { formatDate, formatRange, isOpen, type Seminar } from '../lib/seminars';
+interface Props { s: Seminar }
+const { s } = Astro.props;
+const d = formatDate(s.start);
+const statusClass: Record<string, string> = {
+  受付中: 'bg-emerald-100 text-emerald-800',
+  残りわずか: 'bg-dawn-100 text-dawn-600',
+  満席: 'bg-rose-100 text-rose-700',
+  受付終了: 'bg-black/10 text-muted',
+};
+---
+<article class="card group flex gap-5 transition hover:-translate-y-0.5 hover:shadow-md">
+  <div class="grid w-20 shrink-0 place-content-center rounded-xl bg-night-900 py-3 text-center text-white">
+    <span class="text-xs text-white/60">{d.y}</span>
+    <span class="font-en text-3xl font-semibold leading-none">{d.m}/{d.d}</span>
+    <span class="mt-1 text-xs">（{d.w}）</span>
+  </div>
+  <div class="min-w-0 flex-1">
+    <div class="flex flex-wrap items-center gap-1.5">
+      <span class="badge bg-night-900/5 text-night-800">{s.area}</span>
+      {s.kind && <span class="badge bg-gold-400/20 text-night-800">{s.kind}</span>}
+      <span class:list={['badge', statusClass[s.status] ?? statusClass['受付中']]}>{s.status}</span>
+      {s.isSample && <span class="badge bg-black/5 text-muted">サンプル</span>}
+    </div>
+    <h3 class="mt-2 text-lg font-bold text-night-900">
+      <a href={`/seminars/${s.id}/`} class="after:absolute after:inset-0 relative">{s.title}</a>
+    </h3>
+    <p class="text-sm text-muted">{formatRange(s)}　{s.time}</p>
+    {s.fee && <p class="mt-1 text-sm text-ink">参加費：{s.fee}</p>}
+    <p class="mt-2 text-sm font-bold text-dawn-600">{isOpen(s) ? '詳細・お申し込み →' : '詳細を見る →'}</p>
+  </div>
+</article>
