@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "npm run check:terms && astro build",
     "preview": "astro preview",
-    "check:terms": "python3 tools/check_terms.py"
+    "check:terms": "node tools/check-terms.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.7",

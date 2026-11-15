@@ -9,13 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .node-version
           cache: npm
       - run: npm ci
       - run: npm run build   # NGワードチェック（src）→ ビルド
-      - run: python3 tools/check_terms.py   # ビルド後のHTMLも検査
+      - run: node tools/check-terms.mjs   # ビルド後のHTMLも検査
