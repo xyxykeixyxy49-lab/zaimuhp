@@ -26,11 +26,12 @@ const audiences = [
   <!-- ヒーロー：全画面の背景動画＋スクロールで奥へ -->
   <section class="relative isolate flex min-h-[calc(100svh-7rem)] items-end overflow-hidden bg-night-950 text-white" data-hero>
     <div class="absolute inset-0 -z-10" aria-hidden="true">
-      <video class="size-full object-cover" data-hero-media autoplay muted loop playsinline preload="metadata" poster="/media/hero-loop-poster.jpg">
-        <source src="/media/hero-loop.webm" type="video/webm" />
-        <source src="/media/hero-loop.mp4" type="video/mp4" />
+      <video class="size-full object-cover" data-hero-media autoplay muted loop playsinline preload="metadata" poster="/media/hero-city-poster.jpg">
+        <source src="/media/hero-city.webm" type="video/webm" />
+        <source src="/media/hero-city.mp4" type="video/mp4" />
       </video>
-      <div class="absolute inset-0 bg-gradient-to-t from-night-950/80 via-night-950/20 to-night-950/40"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-night-950/85 via-night-950/30 to-night-950/50"></div>
+      <div class="absolute inset-0 bg-night-900/20 mix-blend-multiply"></div>
     </div>
     <div class="container-x pb-16 pt-28 sm:pb-24" data-hero-content>
       <p class="font-en text-sm tracking-[0.35em] text-dawn-300 uppercase reveal">Dawn of Future Accounting</p>
@@ -145,6 +146,15 @@ const audiences = [
           </li>
         ))}
       </ol>
+    </div>
+    <div class="container-x mt-14">
+      <figure class="relative overflow-hidden rounded-3xl bg-night-900" data-img-reveal>
+        <video class="aspect-video w-full object-cover" muted loop playsinline preload="none" poster="/media/training-poster.jpg" data-lazy-video aria-label="ボードゲーム形式の経営研修に取り組む様子（イメージ映像）">
+          <source data-src="/media/training.webm" type="video/webm" />
+          <source data-src="/media/training.mp4" type="video/mp4" />
+        </video>
+        <figcaption class="absolute bottom-3 right-4 rounded-full bg-black/40 px-3 py-1 text-[11px] text-white/85">イメージ映像（AI生成）</figcaption>
+      </figure>
     </div>
   </section>
 

@@ -51,7 +51,31 @@ function splitChars(el: HTMLElement) {
   return el.querySelectorAll('.char');
 }
 
+// 画面に近づいた動画だけ読み込んで再生する（通信量の節約）。動きを減らす設定では再生しない
+function setupVideos() {
+  if (reduce) document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((v) => { v.removeAttribute('autoplay'); v.pause(); });
+  const lazy = document.querySelectorAll<HTMLVideoElement>('video[data-lazy-video]');
+  if (!lazy.length) return;
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) {
+        if (!v.dataset.loaded) {
+          v.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((s) => (s.src = s.dataset.src!));
+          v.load();
+          v.dataset.loaded = '1';
+        }
+        if (!reduce) v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    }
+  }, { rootMargin: '200px 0px' });
+  lazy.forEach((v) => io.observe(v));
+}
+
 function init() {
+  setupVideos();
   if (reduce) return showAll();
   gsap.registerPlugin(ScrollTrigger);
   document.documentElement.classList.add('has-motion');
