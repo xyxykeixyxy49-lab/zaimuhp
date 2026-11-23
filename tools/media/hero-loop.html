@@ -1,0 +1,104 @@
+<!doctype html>
+<!--
+  ヒーロー背景のループ動画の「設計図」。tools/media/render-video.mjs がこのページを開き、
+  render(t) を1コマずつ呼んで画像にし、ffmpeg で動画にする。
+  色はブランドカラー（濃紺・ブルー・オレンジ）。周期 T 秒で最初と最後がつながる（ループ再生向け）。
+-->
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<style>html,body{margin:0;background:#00003f}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const params = new URLSearchParams(location.search);
+const W = +params.get('w') || 1920, H = +params.get('h') || 1080, T = +params.get('t') || 12;
+const c = document.getElementById('c'); c.width = W; c.height = H;
+const g = c.getContext('2d');
+const TAU = Math.PI * 2;
+const S = Math.min(W, H) / 1080; // 縦横どちらでも同じ見え方にする倍率
+
+// 決まった乱数（毎回同じ絵になる）
+let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const glyphs = '0123456789¥%+−×÷=';
+const particles = Array.from({ length: 70 }, () => ({
+  x: rnd(), y: rnd(), size: 14 + rnd() * 22, speed: 1 + Math.floor(rnd() * 2), // 1周期で上へ1〜2周
+  ch: glyphs[Math.floor(rnd() * glyphs.length)], alpha: 0.08 + rnd() * 0.22, sway: rnd() * TAU,
+}));
+// 折れ線（売上・利益のような右肩上がりの線）
+const lines = [
+  { color: '#035df0', width: 3.2, base: 0.70, amp: 0.10, freq: 2, phase: 0, rise: 0.30 },
+  { color: '#7eaafa', width: 2, base: 0.78, amp: 0.07, freq: 3, phase: 1.3, rise: 0.22 },
+  { color: '#fd6e22', width: 3.6, base: 0.82, amp: 0.06, freq: 2, phase: 2.4, rise: 0.38 },
+];
+
+function render(t) {
+  const p = (t % T) / T; // 0→1 で1周
+  // 背景：夜明けのグラデーション
+  const bg = g.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#00003f'); bg.addColorStop(0.55, '#00006e'); bg.addColorStop(1, '#0a2fb0');
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+
+  // 地平線の朝焼け（ゆっくり呼吸する）
+  const breath = 0.5 + 0.5 * Math.sin(p * TAU);
+  const sun = g.createRadialGradient(W * 0.5, H * 1.08, 0, W * 0.5, H * 1.08, Math.max(W, H) * (0.62 + 0.05 * breath));
+  sun.addColorStop(0, `rgba(253,110,34,${0.75 + 0.15 * breath})`);
+  sun.addColorStop(0.35, 'rgba(171,94,0,0.30)');
+  sun.addColorStop(1, 'rgba(171,94,0,0)');
+  g.fillStyle = sun; g.fillRect(0, 0, W, H);
+
+  // 方眼（ゆっくり手前に流れる）
+  g.save();
+  g.strokeStyle = 'rgba(126,170,250,0.10)'; g.lineWidth = 1;
+  const step = 96 * S, off = p * step;
+  for (let x = -step + (off % step); x < W + step; x += step) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+  for (let y = (off % step); y < H; y += step) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+  g.restore();
+
+  // 数字や記号が立ちのぼる
+  g.save(); g.textAlign = 'center'; g.textBaseline = 'middle';
+  for (const q of particles) {
+    const y = ((q.y - p * q.speed) % 1 + 1) % 1;
+    const x = q.x + 0.008 * Math.sin(p * TAU * 2 + q.sway);
+    const fade = Math.sin(y * Math.PI); // 上下の端で消える
+    g.fillStyle = `rgba(218,231,255,${q.alpha * fade})`;
+    g.font = `600 ${q.size * S}px "Cormorant Garamond", "Times New Roman", serif`;
+    g.fillText(q.ch, x * W, y * H);
+  }
+  g.restore();
+
+  // 折れ線：左から描かれていき、周期の終わりで静かに消える
+  const draw = Math.min(1, p / 0.7), fadeOut = p < 0.85 ? 1 : 1 - (p - 0.85) / 0.15;
+  for (const L of lines) {
+    g.save();
+    g.globalAlpha = fadeOut;
+    g.strokeStyle = L.color; g.lineWidth = L.width * S; g.lineJoin = 'round'; g.lineCap = 'round';
+    g.shadowColor = L.color; g.shadowBlur = 18 * S;
+    g.beginPath();
+    const N = 160;
+    for (let i = 0; i <= N * draw; i++) {
+      const u = i / N;
+      const y = H * (L.base - L.rise * u + L.amp * Math.sin(u * TAU * L.freq + L.phase) * (1 - u * 0.5));
+      i === 0 ? g.moveTo(u * W, y) : g.lineTo(u * W, y);
+    }
+    g.stroke();
+    // 線の先端の光
+    if (draw > 0 && draw < 1) {
+      const u = draw, y = H * (L.base - L.rise * u + L.amp * Math.sin(u * TAU * L.freq + L.phase) * (1 - u * 0.5));
+      g.fillStyle = '#fff'; g.beginPath(); g.arc(u * W, y, 4.5 * S, 0, TAU); g.fill();
+    }
+    g.restore();
+  }
+
+  // 周辺を少し暗く（文字を載せやすくする）
+  const v = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.2, W / 2, H / 2, Math.max(W, H) * 0.75);
+  v.addColorStop(0, 'rgba(0,0,40,0)'); v.addColorStop(1, 'rgba(0,0,40,0.55)');
+  g.fillStyle = v; g.fillRect(0, 0, W, H);
+}
+window.render = render;
+window.frameJpeg = (t, q = 0.9) => { render(t); return c.toDataURL('image/jpeg', q); };
+render(0);
+</script>
+</body>
+</html>

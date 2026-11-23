@@ -4,7 +4,11 @@
 <section class="section bg-paper">
   <div class="container-x">
     <div class="relative overflow-hidden rounded-3xl bg-night-900 px-6 py-12 text-center text-white sm:px-12">
-      <div class="pointer-events-none absolute -bottom-24 left-1/2 size-96 -translate-x-1/2 rounded-full bg-dawn-500/40 blur-3xl"></div>
+      <video class="pointer-events-none absolute inset-0 size-full object-cover opacity-60" muted loop playsinline preload="none" poster="/media/hero-loop-poster.jpg" data-lazy-video aria-hidden="true">
+        <source data-src="/media/hero-loop.webm" type="video/webm" />
+        <source data-src="/media/hero-loop.mp4" type="video/mp4" />
+      </video>
+      <div class="pointer-events-none absolute inset-0 bg-night-900/40"></div>
       <p class="relative eyebrow !text-dawn-300">Get Started</p>
       <h2 class="relative mt-2 text-2xl sm:text-3xl font-black">まずは、1日の体験から。</h2>
       <p class="relative mx-auto mt-4 max-w-xl text-white/75">日程の確認・資料のご請求・研修のご相談は、いずれも無料です。お気軽にどうぞ。</p>

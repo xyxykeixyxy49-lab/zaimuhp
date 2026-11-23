@@ -10,10 +10,14 @@ import { corporatePlans } from '../data/content';
 
   <section class="section">
     <div class="container-x">
-      <div class="text-center"><p class="eyebrow">Plans</p><h2 class="h-section">研修テーマの例</h2></div>
-      <div class="mt-10 grid gap-5 sm:grid-cols-2">
+      <figure class="relative mb-16 overflow-hidden rounded-3xl" data-img-reveal>
+        <img src="/media/photo-training-b.jpg" alt="会議室でボードゲーム形式の経営研修に取り組む社員の様子（イメージ）" class="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"  loading="lazy" />
+        <figcaption class="absolute bottom-3 right-4 rounded-full bg-black/45 px-3 py-1 text-[11px] text-white/90">イメージ（AI生成）</figcaption>
+      </figure>
+      <div class="text-center"><p class="eyebrow">Plans</p><h2 class="h-section" data-split>研修テーマの例</h2></div>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2" data-stagger>
         {corporatePlans.map((c) => (
-          <div class="card reveal"><h3 class="text-lg font-bold text-night-900">{c.name}</h3><p class="mt-2 text-sm text-muted">{c.body}</p></div>
+          <div class="card"><h3 class="text-lg font-bold text-night-900">{c.name}</h3><p class="mt-2 text-sm text-muted">{c.body}</p></div>
         ))}
       </div>
 

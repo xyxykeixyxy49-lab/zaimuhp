@@ -10,6 +10,9 @@ import { listSeminars } from '../lib/seminars';
 export const prerender = false;
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300');
 
+// AI生成の写真を使っているカード（実際の研修写真に差し替えたら外す）
+const aiPhotos = new Set(['basic', 'trial']);
+
 const seminars = (await listSeminars().catch(() => [])).slice(0, 4);
 const news = (await getCollection('news', (n) => !n.data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
@@ -23,46 +26,60 @@ const audiences = [
 ];
 ---
 <Base>
-  <!-- ヒーロー -->
-  <section class="relative overflow-hidden bg-dawn-sky text-white">
-    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-      <div class="absolute -bottom-40 left-1/2 size-[44rem] -translate-x-1/2 rounded-full bg-dawn-400/50 blur-3xl"></div>
-      <svg class="absolute inset-x-0 bottom-0 w-full text-paper" viewBox="0 0 1440 80" preserveAspectRatio="none"><path fill="currentColor" d="M0 80h1440V40C1200 70 960 80 720 60S240 10 0 40z" /></svg>
-      {Array.from({ length: 24 }).map((_, i) => (
-        <span class="absolute size-0.5 rounded-full bg-white/70" style={`left:${(i * 41) % 100}%;top:${(i * 23) % 45}%;opacity:${0.3 + ((i * 7) % 6) / 10}`}></span>
-      ))}
+  <!-- ヒーロー：全画面の背景動画＋スクロールで奥へ -->
+  <section class="relative isolate flex min-h-[calc(100svh-7rem)] items-end overflow-hidden bg-night-950 text-white" data-hero>
+    <div class="absolute inset-0 -z-10" aria-hidden="true">
+      <video class="size-full object-cover" data-hero-media autoplay muted loop playsinline preload="metadata" poster="/media/hero-city-poster.jpg">
+        <source src="/media/hero-city.webm" type="video/webm" />
+        <source src="/media/hero-city.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-t from-night-950/85 via-night-950/30 to-night-950/50"></div>
+      <div class="absolute inset-0 bg-night-900/20 mix-blend-multiply"></div>
     </div>
-    <div class="container-x relative pt-20 pb-36 sm:pt-28 sm:pb-44">
+    <div class="container-x pb-16 pt-28 sm:pb-24" data-hero-content>
       <p class="font-en text-sm tracking-[0.35em] text-dawn-300 uppercase reveal">Dawn of Future Accounting</p>
-      <h1 class="mt-5 text-[2rem] leading-snug font-black sm:text-5xl sm:leading-tight reveal">
+      <h1 class="mt-5 text-[2rem] leading-snug font-black sm:text-6xl sm:leading-[1.25]" data-split>
         数字がわかると、<br />経営の景色が変わる。
       </h1>
       <p class="mt-6 max-w-xl text-white/85 sm:text-lg reveal">
         ゲームで会社を経営し、自分の手で決算をする。<br class="hidden sm:inline" />
         戦略MGで、経営・財務・決算書が「わかる」から「使える」へ。
       </p>
-      <div class="mt-8 flex flex-wrap gap-2 reveal">
-        {site.venues.map((v) => <span class="rounded-full bg-white/10 px-3 py-1 text-xs ring-1 ring-white/20">{v}開催</span>)}
-      </div>
       <div class="mt-10 grid gap-3 sm:flex reveal">
         <a href="/seminars/" class="btn-primary !px-8 !py-4 text-base">セミナー日程を見る</a>
         <a href="/document/" class="btn-ghost !px-8 !py-4 text-base">資料請求（無料）</a>
       </div>
     </div>
+    <div class="absolute bottom-6 right-6 hidden flex-col items-center gap-3 text-[10px] tracking-[0.3em] text-white/60 sm:flex" aria-hidden="true">
+      <span class="[writing-mode:vertical-rl]">SCROLL</span><span class="scroll-cue"></span>
+    </div>
   </section>
+
+  <!-- 流れる帯 -->
+  <div class="marquee border-y border-black/5 bg-white py-5" aria-hidden="true">
+    <div class="marquee__track font-en text-3xl font-semibold tracking-[0.15em] text-night-900/80 sm:text-5xl">
+      {[0, 1].map(() => (
+        <span class="inline-flex gap-12">
+          {['TOKYO', 'OSAKA', 'NAGOYA', 'UTSUNOMIYA', 'FINANCE', 'STRATEGY', 'DECISION', 'ACCOUNTING'].map((w, i) => (
+            <span class:list={['inline-flex items-center gap-12', i % 2 ? 'text-azure-500' : '']}>{w}<span class="text-dawn-500">◆</span></span>
+          ))}
+        </span>
+      ))}
+    </div>
+  </div>
 
   <!-- ミッション -->
   <section class="section bg-white">
     <div class="container-x grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
-      <div class="reveal">
-        <p class="eyebrow">Our Mission</p>
-        <p class="mt-4 font-display text-2xl font-bold leading-relaxed text-night-900 sm:text-[2rem]">{mvv.mission.title}</p>
+      <div>
+        <p class="eyebrow reveal">Our Mission</p>
+        <h2 class="mt-4 font-display text-2xl font-bold leading-relaxed text-night-900 sm:text-[2rem]" data-split>{mvv.mission.title}</h2>
         <div class="mt-6 grid gap-2 border-l-4 border-dawn-500 pl-5 text-muted">
           {mvv.mission.body.map((b) => <p>{b}</p>)}
         </div>
         <a href="/about/" class="btn-outline mt-8">ミッション・ビジョン・バリュー</a>
       </div>
-      <ul class="grid gap-3 reveal">
+      <ul class="grid gap-3" data-stagger>
         {mvv.values.map((v, i) => (
           <li class="flex items-center gap-4 rounded-2xl bg-paper px-5 py-4">
             <span class="grid size-9 shrink-0 place-items-center rounded-full bg-azure-500 font-en text-lg font-semibold text-white">{i + 1}</span>
@@ -73,17 +90,27 @@ const audiences = [
     </div>
   </section>
 
+  <!-- 視差の大判ビジュアル -->
+  <section class="bg-white pb-16 sm:pb-24" aria-hidden="true">
+    <div class="container-x">
+      <div class="relative h-[42vh] min-h-64 overflow-hidden rounded-3xl" data-img-reveal>
+        <img src="/media/mission.jpg" alt="" class="absolute inset-x-0 -top-[10%] h-[120%] w-full object-cover" data-parallax="0.25" loading="lazy" />
+        <p class="absolute bottom-6 left-6 font-en text-4xl font-semibold tracking-[0.1em] text-white/90 sm:text-6xl">From numbers, to decisions.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- こんな方へ -->
   <section class="section">
     <div class="container-x">
       <div class="text-center reveal">
         <p class="eyebrow">For You</p>
-        <h2 class="h-section">こんな方のための研修です</h2>
+        <h2 class="h-section" data-split>こんな方のための研修です</h2>
         <p class="lead">経営戦略の力をアップデートしたい方、財務・会計・決算書の理解を深めたい方へ。</p>
       </div>
-      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
         {audiences.map((a) => (
-          <div class="card reveal">
+          <div class="card">
             <span class="grid size-12 place-items-center rounded-xl bg-dawn-50 text-dawn-600">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={a.icon} /></svg>
             </span>
@@ -100,7 +127,7 @@ const audiences = [
     <div class="container-x grid items-center gap-12 lg:grid-cols-2">
       <div class="reveal">
         <p class="eyebrow">About the Program</p>
-        <h2 class="h-section">戦略MGとは</h2>
+        <h2 class="h-section" data-split>戦略MGとは</h2>
         <p class="mt-6">
           戦略MGは、受講者一人ひとりが社長となって会社を経営する、ボードゲーム形式の経営シミュレーション研修です。
           材料の仕入れ、製品の製造・販売、人の採用、設備投資――。限られた資金と時間の中で意思決定を重ね、期末には自分の手で決算書をつくります。
@@ -123,6 +150,15 @@ const audiences = [
         ))}
       </ol>
     </div>
+    <div class="container-x mt-14">
+      <figure class="relative overflow-hidden rounded-3xl bg-night-900" data-img-reveal>
+        <video class="aspect-video w-full object-cover" muted loop playsinline preload="none" poster="/media/training-poster.jpg" data-lazy-video aria-label="ボードゲーム形式の経営研修に取り組む様子（イメージ映像）">
+          <source data-src="/media/training.webm" type="video/webm" />
+          <source data-src="/media/training.mp4" type="video/mp4" />
+        </video>
+        <figcaption class="absolute bottom-3 right-4 rounded-full bg-black/40 px-3 py-1 text-[11px] text-white/85">イメージ映像（AI生成）</figcaption>
+      </figure>
+    </div>
   </section>
 
   <!-- プログラム -->
@@ -131,18 +167,24 @@ const audiences = [
       <div class="flex flex-wrap items-end justify-between gap-4 reveal">
         <div>
           <p class="eyebrow">Programs</p>
-          <h2 class="h-section">研修プログラム</h2>
+          <h2 class="h-section" data-split>研修プログラム</h2>
         </div>
         <a href="/program/" class="text-sm font-bold text-dawn-600">すべてのプログラム →</a>
       </div>
-      <div class="mt-10 grid gap-5 lg:grid-cols-3">
+      <div class="mt-10 grid gap-6 lg:grid-cols-3" data-stagger>
         {programs.map((p) => (
-          <a href={`/program/#${p.slug}`} class="card group reveal transition hover:-translate-y-1 hover:shadow-lg">
-            <p class="font-en text-xs tracking-[0.2em] text-dawn-600 uppercase">{p.en}</p>
-            <h3 class="mt-2 text-lg font-bold text-night-900">{p.name}</h3>
-            <p class="mt-1 text-xs text-muted">対象：{p.target}</p>
-            <p class="mt-4 text-sm">{p.summary}</p>
-            <p class="mt-4 text-sm font-bold text-dawn-600">詳しく見る →</p>
+          <a href={`/program/#${p.slug}`} class="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-xl">
+            <div class="zoom-hover relative aspect-[3/2]">
+              <img src={`/media/card-${p.slug}.jpg`} alt="" class="size-full object-cover" loading="lazy" />
+              <span class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 font-en text-xs tracking-[0.2em] text-night-900 uppercase">{p.en}</span>
+              {aiPhotos.has(p.slug) && <span class="absolute bottom-3 right-3 rounded-full bg-black/45 px-2.5 py-0.5 text-[10px] text-white/90">イメージ（AI生成）</span>}
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-night-900">{p.name}</h3>
+              <p class="mt-1 text-xs text-muted">対象：{p.target}</p>
+              <p class="mt-4 text-sm">{p.summary}</p>
+              <p class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-dawn-600">詳しく見る <span class="transition group-hover:translate-x-1">→</span></p>
+            </div>
           </a>
         ))}
       </div>
@@ -159,7 +201,7 @@ const audiences = [
       <div class="flex flex-wrap items-end justify-between gap-4 reveal">
         <div>
           <p class="eyebrow">Schedule</p>
-          <h2 class="h-section">開催予定のセミナー</h2>
+          <h2 class="h-section" data-split>開催予定のセミナー</h2>
           <p class="lead">東京・大阪・名古屋・宇都宮で開催しています。</p>
         </div>
         <a href="/seminars/" class="text-sm font-bold text-dawn-600">日程一覧へ →</a>
@@ -177,11 +219,11 @@ const audiences = [
     <div class="container-x">
       <div class="text-center reveal">
         <p class="eyebrow">Flow</p>
-        <h2 class="h-section">お申し込みから受講まで</h2>
+        <h2 class="h-section" data-split>お申し込みから受講まで</h2>
       </div>
-      <ol class="mt-12 grid gap-5 md:grid-cols-4">
+      <ol class="mt-12 grid gap-5 md:grid-cols-4" data-stagger>
         {flow.map((f) => (
-          <li class="card relative reveal">
+          <li class="card relative">
             <span class="font-en text-5xl font-semibold text-dawn-200">{f.step}</span>
             <h3 class="mt-2 font-bold text-night-900">{f.title}</h3>
             <p class="mt-2 text-sm text-muted">{f.body}</p>

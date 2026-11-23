@@ -48,6 +48,13 @@ const isReview = PUBLIC_SITE_MODE !== 'production';
       url: Astro.site?.toString(),
       email: site.email,
     })} />
+    <script is:inline>
+      // 動きを付ける端末では、表示前の要素を隠す。JSが読み込めなかったときは3秒後に元に戻す
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('has-motion');
+        setTimeout(function () { if (!window.__motionReady) document.documentElement.classList.remove('has-motion'); }, 3000);
+      }
+    </script>
     <slot name="head" />
   </head>
   <body class="min-h-dvh flex flex-col">
@@ -63,12 +70,8 @@ const isReview = PUBLIC_SITE_MODE !== 'production';
     </main>
     <Footer />
     <script>
-      // スクロールで要素をふわっと表示
-      const io = new IntersectionObserver(
-        (entries) => entries.forEach((e) => e.isIntersecting && (e.target.classList.add('is-visible'), io.unobserve(e.target))),
-        { rootMargin: '0px 0px -10% 0px' },
-      );
-      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      import '../scripts/motion';
+      (window as any).__motionReady = true;
 
       // 流入元（最初に来たときの参照元・UTM）を記録し、フォームの hidden 項目に入れる
       try {

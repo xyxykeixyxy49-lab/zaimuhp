@@ -78,9 +78,42 @@
     linear-gradient(180deg, #00003f 0%, #00006e 40%, #0a2fb0 72%, #035df0 100%);
 }
 
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
-.reveal.is-visible { opacity: 1; transform: none; }
+/* ===== 動き（src/scripts/motion.ts と対） ===== */
+/* JSが動く端末だけ、表示前の要素を隠しておく（has-motion は <head> で付与） */
+.has-motion .reveal,
+.has-motion [data-split],
+.has-motion [data-img-reveal],
+.has-motion [data-stagger] > * { opacity: 0; }
+[data-split] .char { display: inline-block; will-change: transform; }
+[data-split] { overflow: hidden; padding-bottom: 0.08em; }
+[data-site-header] { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+/* 画像のホバーでゆっくり拡大 */
+.zoom-hover { overflow: hidden; }
+.zoom-hover img, .zoom-hover video { transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+.zoom-hover:hover img, .zoom-hover:hover video { transform: scale(1.06); }
+
+/* 横に流れる帯（マーキー） */
+.marquee { overflow: hidden; white-space: nowrap; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee__track { display: inline-flex; gap: 3rem; animation: marquee 38s linear infinite; padding-right: 3rem; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* スクロールを促すライン */
+.scroll-cue { position: relative; width: 1px; height: 64px; background: rgba(255,255,255,.25); overflow: hidden; }
+.scroll-cue::after { content: ""; position: absolute; left: 0; top: -40%; width: 1px; height: 40%; background: #fff; animation: cue 2.2s cubic-bezier(.6,0,.2,1) infinite; }
+@keyframes cue { to { top: 100%; } }
+
+/* ページ移動をふわっと切り替える（対応ブラウザのみ） */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-out .35s ease both; }
+::view-transition-new(root) { animation: vt-in .55s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
+
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
   html { scroll-behavior: auto; }
+  .marquee__track, .scroll-cue::after { animation: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }
