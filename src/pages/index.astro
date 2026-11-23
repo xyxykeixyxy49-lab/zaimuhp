@@ -10,6 +10,9 @@ import { listSeminars } from '../lib/seminars';
 export const prerender = false;
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300');
 
+// AI生成の写真を使っているカード（実際の研修写真に差し替えたら外す）
+const aiPhotos = new Set(['basic', 'trial']);
+
 const seminars = (await listSeminars().catch(() => [])).slice(0, 4);
 const news = (await getCollection('news', (n) => !n.data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
@@ -174,6 +177,7 @@ const audiences = [
             <div class="zoom-hover relative aspect-[3/2]">
               <img src={`/media/card-${p.slug}.jpg`} alt="" class="size-full object-cover" loading="lazy" />
               <span class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 font-en text-xs tracking-[0.2em] text-night-900 uppercase">{p.en}</span>
+              {aiPhotos.has(p.slug) && <span class="absolute bottom-3 right-3 rounded-full bg-black/45 px-2.5 py-0.5 text-[10px] text-white/90">イメージ（AI生成）</span>}
             </div>
             <div class="p-6">
               <h3 class="text-lg font-bold text-night-900">{p.name}</h3>
